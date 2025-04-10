@@ -4,7 +4,6 @@ namespace DomainCertificateBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use DoctrineEnhanceBundle\Repository\CommonRepositoryAware;
 use DomainCertificateBundle\Entity\TlsProxy;
 
 /**
@@ -15,8 +14,6 @@ use DomainCertificateBundle\Entity\TlsProxy;
  */
 class TlsProxyRepository extends ServiceEntityRepository
 {
-    use CommonRepositoryAware;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TlsProxy::class);

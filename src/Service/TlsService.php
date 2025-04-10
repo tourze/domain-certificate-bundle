@@ -4,12 +4,14 @@ namespace DomainCertificateBundle\Service;
 
 use Carbon\Carbon;
 use CloudflareDnsBundle\Entity\DnsDomain;
-use CloudflareDnsBundle\Repository\DnsDomainRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TlsService
 {
-    public function __construct(private readonly DnsDomainRepository $domainRepository)
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    )
     {
     }
 
@@ -74,6 +76,7 @@ dns_cloudflare_api_key = {$domain->getIamKey()->getSecretKey()}");
             $domain->setTlsExpireTime($expireTime);
         }
 
-        $this->domainRepository->save($domain);
+        $this->entityManager->persist($domain);
+        $this->entityManager->flush();
     }
 }
