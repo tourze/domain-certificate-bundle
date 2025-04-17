@@ -57,7 +57,7 @@ class StartTlsProxyServerCommand extends Command
             // 设置transport开启ssl
             $worker->transport = 'ssl';
             $worker->onMessage = function (TcpConnection $connection, string $buffer) use ($proxy) {
-                dump($connection->id, $buffer);
+                var_dump($connection->id, $buffer);
                 $remoteConn = new AsyncTcpConnection("tcp://{$proxy->getTargetHost()}:{$proxy->getTargetPort()}");
                 $connection->pipe($remoteConn);
                 $this->pipe($connection, $remoteConn);
