@@ -11,65 +11,36 @@ use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
 use Tourze\DoctrineUserBundle\Attribute\CreatedByColumn;
 use Tourze\DoctrineUserBundle\Attribute\UpdatedByColumn;
-use Tourze\EasyAdmin\Attribute\Action\Creatable;
-use Tourze\EasyAdmin\Attribute\Action\Deletable;
-use Tourze\EasyAdmin\Attribute\Action\Editable;
-use Tourze\EasyAdmin\Attribute\Column\BoolColumn;
-use Tourze\EasyAdmin\Attribute\Column\ExportColumn;
-use Tourze\EasyAdmin\Attribute\Column\ListColumn;
-use Tourze\EasyAdmin\Attribute\Field\FormField;
-use Tourze\EasyAdmin\Attribute\Filter\Keyword;
-use Tourze\EasyAdmin\Attribute\Permission\AsPermission;
 
-#[AsPermission(title: 'TLS代理')]
-#[Creatable]
-#[Editable]
-#[Deletable]
 #[ORM\Entity(repositoryClass: TlsProxyRepository::class)]
 #[ORM\Table(name: 'ims_cloudflare_tls_proxy', options: ['comment' => 'TLS代理'])]
 class TlsProxy implements \Stringable
 {
     use TimestampableAware;
-    #[ListColumn(order: -1)]
-    #[ExportColumn]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
     private ?int $id = 0;
 
-    #[Keyword]
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(length: 128, unique: true, options: ['comment' => '名称'])]
     private ?string $name = null;
 
-    #[ListColumn(title: '关联域名')]
-    #[FormField(title: '关联域名')]
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private DnsDomain $domain;
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(options: ['comment' => '监听端口'])]
     private ?int $listenPort = null;
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(length: 100, options: ['comment' => '目标HOST'])]
     private ?string $targetHost = null;
 
-    #[ListColumn]
-    #[FormField]
     #[ORM\Column(options: ['comment' => '目标端口'])]
     private ?int $targetPort = null;
 
-    #[BoolColumn]
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
-    #[ListColumn(order: 97)]
-    #[FormField(order: 97)]
     private ?bool $valid = false;
 
     #[CreatedByColumn]
