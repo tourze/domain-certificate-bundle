@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 
 #[AsCronTask('44 10 * * *')]
-#[AsCommand(name: AutoRenewTlsCertCommand::NAME)]
+#[AsCommand(name: self::NAME, description: '自动更新所有TLS证书')]
 class AutoRenewTlsCertCommand extends Command
 {
     public const NAME = 'cloudflare:auto-renew-tls-cert';

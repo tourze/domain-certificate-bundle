@@ -14,7 +14,7 @@ use Workerman\Connection\AsyncTcpConnection;
 use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 
-#[AsCommand(name: StartTlsProxyServerCommand::NAME)]
+#[AsCommand(name: self::NAME, description: '启动TLS代理服务器')]
 class StartTlsProxyServerCommand extends Command
 {
     public const NAME = 'cloudflare:start-tls-proxy';

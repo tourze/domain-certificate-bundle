@@ -2,7 +2,6 @@
 
 namespace DomainCertificateBundle\Service;
 
-use Carbon\Carbon;
 use CloudflareDnsBundle\Entity\DnsDomain;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -71,7 +70,7 @@ dns_cloudflare_api_key = {$domain->getIamKey()->getSecretKey()}");
         if ($match) {
             $expireTime = "$match[1] GMT";
             $output->writeln('过期时间 => ' . $expireTime);
-            $expireTime = Carbon::parse($expireTime);
+            $expireTime = new \DateTimeImmutable($expireTime);
             $output->writeln('过期时间 => ' . $expireTime->format('Y-m-d H:i:s'));
             $domain->setTlsExpireTime($expireTime);
         }

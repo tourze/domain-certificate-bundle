@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: RenewTlsCertCommand::NAME)]
+#[AsCommand(name: self::NAME, description: '更新TLS证书')]
 class RenewTlsCertCommand extends Command
 {
     public const NAME = 'cloudflare:renew-tls-cert';
