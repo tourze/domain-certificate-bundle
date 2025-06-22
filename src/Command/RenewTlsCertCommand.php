@@ -30,8 +30,13 @@ class RenewTlsCertCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $domain = $this->domainRepository->find($input->getArgument('domainId'));
-        if (!$domain) {
+        $domainId = $input->getArgument('domainId');
+        if ($domainId === null || $domainId === '') {
+            throw new \Exception('请提供域名ID');
+        }
+        
+        $domain = $this->domainRepository->find($domainId);
+        if ($domain === null) {
             throw new \Exception('找不到证书信息');
         }
 

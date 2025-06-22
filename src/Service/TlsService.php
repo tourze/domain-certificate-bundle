@@ -4,12 +4,15 @@ namespace DomainCertificateBundle\Service;
 
 use CloudflareDnsBundle\Entity\DnsDomain;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainCertificateBundle\Entity\TlsCertificate;
+use DomainCertificateBundle\Repository\TlsCertificateRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TlsService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TlsCertificateRepository $certificateRepository,
     )
     {
     }
@@ -57,25 +60,32 @@ dns_cloudflare_api_key = {$domain->getIamKey()->getSecretKey()}");
             throw new \Exception('找不到证书信息，申请失败');
         }
 
-        $domain->setTlsCertPath($certPath);
-        $domain->setTlsKeyPath($keyPath);
-        $domain->setTlsFullchainPath($fullchainPath);
-        $domain->setTlsChainPath($chainPath);
+        // 查找或创建 TlsCertificate 实体
+        $certificate = $this->certificateRepository->findOneBy(['domain' => $domain]);
+        if ($certificate === null) {
+            $certificate = new TlsCertificate();
+            $certificate->setDomain($domain);
+        }
+        
+        $certificate->setTlsCertPath($certPath);
+        $certificate->setTlsKeyPath($keyPath);
+        $certificate->setTlsFullchainPath($fullchainPath);
+        $certificate->setTlsChainPath($chainPath);
 
         exec("openssl x509 -noout -dates -in {$certPath}", $res, $result_code);
         $res = implode("\n", $res);
         // notBefore=May  9 03:20:30 2024 GMT
         // notAfter=Aug  7 03:20:29 2024 GMT
         preg_match('@notAfter=(.*?) GMT@', $res, $match);
-        if ($match) {
+        if (count($match) > 1) {
             $expireTime = "$match[1] GMT";
             $output->writeln('过期时间 => ' . $expireTime);
             $expireTime = new \DateTimeImmutable($expireTime);
             $output->writeln('过期时间 => ' . $expireTime->format('Y-m-d H:i:s'));
-            $domain->setTlsExpireTime($expireTime);
+            $certificate->setTlsExpireTime($expireTime);
         }
 
-        $this->entityManager->persist($domain);
+        $this->entityManager->persist($certificate);
         $this->entityManager->flush();
     }
 }

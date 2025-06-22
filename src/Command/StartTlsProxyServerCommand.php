@@ -2,6 +2,7 @@
 
 namespace DomainCertificateBundle\Command;
 
+use DomainCertificateBundle\Repository\TlsCertificateRepository;
 use DomainCertificateBundle\Repository\TlsProxyRepository;
 use Fidry\CpuCoreCounter\CpuCoreCounter;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,6 +23,7 @@ class StartTlsProxyServerCommand extends Command
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly TlsProxyRepository $proxyRepository,
+        private readonly TlsCertificateRepository $certificateRepository,
         private readonly CpuCoreCounter $counter,
     ) {
         parent::__construct();
@@ -41,11 +43,18 @@ class StartTlsProxyServerCommand extends Command
         Worker::$logFile = $this->kernel->getProjectDir() . '/tls-proxy.log';
 
         foreach ($this->proxyRepository->findBy(['valid' => true]) as $proxy) {
+            // 获取该域名的证书
+            $certificate = $this->certificateRepository->findOneBy(['domain' => $proxy->getDomain()]);
+            if ($certificate === null) {
+                $output->writeln("域名 {$proxy->getDomain()->getName()} 没有找到证书，跳过");
+                continue;
+            }
+            
             // 证书最好是申请的证书
             $context = [
                 'ssl' => [
-                    'local_cert' => $proxy->getDomain()->getTlsCertPath(), // 也可以是crt文件
-                    'local_pk' => $proxy->getDomain()->getTlsKeyPath(),
+                    'local_cert' => $certificate->getTlsCertPath(), // 也可以是crt文件
+                    'local_pk' => $certificate->getTlsKeyPath(),
                     'verify_peer' => false,
                     'allow_self_signed' => true,
                 ],
