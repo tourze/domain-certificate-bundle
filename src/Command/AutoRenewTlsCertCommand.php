@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 
-#[AsCronTask('44 10 * * *')]
+#[AsCronTask(expression: '44 10 * * *')]
 #[AsCommand(name: self::NAME, description: '自动更新所有TLS证书')]
 class AutoRenewTlsCertCommand extends Command
 {

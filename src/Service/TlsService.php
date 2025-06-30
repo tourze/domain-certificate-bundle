@@ -5,6 +5,7 @@ namespace DomainCertificateBundle\Service;
 use CloudflareDnsBundle\Entity\DnsDomain;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainCertificateBundle\Entity\TlsCertificate;
+use DomainCertificateBundle\Exception\CertificateGenerationException;
 use DomainCertificateBundle\Repository\TlsCertificateRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -57,7 +58,7 @@ dns_cloudflare_api_key = {$domain->getIamKey()->getSecretKey()}");
         $this->execCommand($command, $output);
 
         if (!is_file($certPath)) {
-            throw new \Exception('找不到证书信息，申请失败');
+            throw new CertificateGenerationException('找不到证书信息，申请失败');
         }
 
         // 查找或创建 TlsCertificate 实体

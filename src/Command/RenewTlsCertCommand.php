@@ -3,6 +3,8 @@
 namespace DomainCertificateBundle\Command;
 
 use CloudflareDnsBundle\Repository\DnsDomainRepository;
+use DomainCertificateBundle\Exception\DomainNotFoundException;
+use DomainCertificateBundle\Exception\InvalidDomainIdException;
 use DomainCertificateBundle\Service\TlsService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -32,12 +34,12 @@ class RenewTlsCertCommand extends Command
     {
         $domainId = $input->getArgument('domainId');
         if ($domainId === null || $domainId === '') {
-            throw new \Exception('请提供域名ID');
+            throw new InvalidDomainIdException('请提供域名ID');
         }
         
         $domain = $this->domainRepository->find($domainId);
         if ($domain === null) {
-            throw new \Exception('找不到证书信息');
+            throw new DomainNotFoundException('找不到域名信息');
         }
 
         $this->tlsService->renew($domain, $output);
