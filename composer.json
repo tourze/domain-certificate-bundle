@@ -26,7 +26,7 @@
     "tourze/biz-user-bundle": "0.0.*",
     "tourze/bundle-dependency": "1.*",
     "tourze/cloudflare-dns-bundle": "0.0.*",
-    "tourze/doctrine-indexed-bundle": "0.0.*",
+    "tourze/doctrine-indexed-bundle": "1.0.*",
     "tourze/doctrine-timestamp-bundle": "0.0.*",
     "tourze/doctrine-track-bundle": "0.1.*",
     "tourze/doctrine-user-bundle": "0.0.*",
