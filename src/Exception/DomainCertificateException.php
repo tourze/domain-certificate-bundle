@@ -2,8 +2,6 @@
 
 namespace DomainCertificateBundle\Exception;
 
-use RuntimeException;
-
-class DomainCertificateException extends RuntimeException
+abstract class DomainCertificateException extends \RuntimeException
 {
 }

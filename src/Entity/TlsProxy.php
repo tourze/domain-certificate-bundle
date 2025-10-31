@@ -6,6 +6,7 @@ use CloudflareDnsBundle\Entity\DnsDomain;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DomainCertificateBundle\Repository\TlsProxyRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineIndexedBundle\Attribute\IndexColumn;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineTrackBundle\Attribute\TrackColumn;
@@ -17,13 +18,14 @@ class TlsProxy implements \Stringable
 {
     use TimestampableAware;
     use BlameableAware;
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
-    private ?int $id = 0;
+    private ?int $id = null;
 
-    #[ORM\Column(length: 128, unique: true, options: ['comment' => '名称'])]
+    #[ORM\Column(length: 128, unique: true, nullable: true, options: ['comment' => '名称'])]
+    #[Assert\Length(max: 128)]
     private ?string $name = null;
 
     #[ORM\ManyToOne]
@@ -31,17 +33,24 @@ class TlsProxy implements \Stringable
     private DnsDomain $domain;
 
     #[ORM\Column(options: ['comment' => '监听端口'])]
+    #[Assert\NotNull]
+    #[Assert\Range(min: 1, max: 65535)]
     private ?int $listenPort = null;
 
     #[ORM\Column(length: 100, options: ['comment' => '目标HOST'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $targetHost = null;
 
     #[ORM\Column(options: ['comment' => '目标端口'])]
+    #[Assert\NotNull]
+    #[Assert\Range(min: 1, max: 65535)]
     private ?int $targetPort = null;
 
     #[IndexColumn]
     #[TrackColumn]
     #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['comment' => '有效', 'default' => 0])]
+    #[Assert\Type(type: 'bool')]
     private ?bool $valid = false;
 
     public function getId(): ?int
@@ -54,16 +63,14 @@ class TlsProxy implements \Stringable
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     public function __toString(): string
     {
-        return $this->getId() !== null ? "{$this->getName()}" : '';
+        return $this->getName() ?? '';
     }
 
     public function getDomain(): DnsDomain
@@ -71,11 +78,9 @@ class TlsProxy implements \Stringable
         return $this->domain;
     }
 
-    public function setDomain(DnsDomain $domain): static
+    public function setDomain(DnsDomain $domain): void
     {
         $this->domain = $domain;
-
-        return $this;
     }
 
     public function getListenPort(): ?int
@@ -83,11 +88,9 @@ class TlsProxy implements \Stringable
         return $this->listenPort;
     }
 
-    public function setListenPort(int $listenPort): static
+    public function setListenPort(int $listenPort): void
     {
         $this->listenPort = $listenPort;
-
-        return $this;
     }
 
     public function getTargetHost(): ?string
@@ -95,11 +98,9 @@ class TlsProxy implements \Stringable
         return $this->targetHost;
     }
 
-    public function setTargetHost(string $targetHost): static
+    public function setTargetHost(string $targetHost): void
     {
         $this->targetHost = $targetHost;
-
-        return $this;
     }
 
     public function getTargetPort(): ?int
@@ -107,11 +108,9 @@ class TlsProxy implements \Stringable
         return $this->targetPort;
     }
 
-    public function setTargetPort(int $targetPort): static
+    public function setTargetPort(int $targetPort): void
     {
         $this->targetPort = $targetPort;
-
-        return $this;
     }
 
     public function isValid(): ?bool
@@ -119,9 +118,8 @@ class TlsProxy implements \Stringable
         return $this->valid;
     }
 
-    public function setValid(?bool $valid): self
+    public function setValid(?bool $valid): void
     {
         $this->valid = $valid;
-
-        return $this;
-    }}
+    }
+}

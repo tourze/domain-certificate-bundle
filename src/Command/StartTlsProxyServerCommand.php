@@ -2,6 +2,7 @@
 
 namespace DomainCertificateBundle\Command;
 
+use DomainCertificateBundle\Entity\TlsProxy;
 use DomainCertificateBundle\Repository\TlsCertificateRepository;
 use DomainCertificateBundle\Repository\TlsProxyRepository;
 use Fidry\CpuCoreCounter\CpuCoreCounter;
@@ -42,14 +43,15 @@ class StartTlsProxyServerCommand extends Command
         Worker::$pidFile = $this->kernel->getProjectDir() . '/tls-proxy.pid';
         Worker::$logFile = $this->kernel->getProjectDir() . '/tls-proxy.log';
 
+        /** @var TlsProxy $proxy */
         foreach ($this->proxyRepository->findBy(['valid' => true]) as $proxy) {
             // 获取该域名的证书
             $certificate = $this->certificateRepository->findOneBy(['domain' => $proxy->getDomain()]);
-            if ($certificate === null) {
+            if (null === $certificate) {
                 $output->writeln("域名 {$proxy->getDomain()->getName()} 没有找到证书，跳过");
                 continue;
             }
-            
+
             // 证书最好是申请的证书
             $context = [
                 'ssl' => [
@@ -65,8 +67,7 @@ class StartTlsProxyServerCommand extends Command
             $worker->name = "tls_proxy_{$proxy->getDomain()->getName()}_{$proxy->getId()}";
             // 设置transport开启ssl
             $worker->transport = 'ssl';
-            $worker->onMessage = function (TcpConnection $connection, string $buffer) use ($proxy) {
-                var_dump($connection->id, $buffer);
+            $worker->onMessage = function (TcpConnection $connection, string $buffer) use ($proxy): void {
                 $remoteConn = new AsyncTcpConnection("tcp://{$proxy->getTargetHost()}:{$proxy->getTargetPort()}");
                 $connection->pipe($remoteConn);
                 $this->pipe($connection, $remoteConn);
@@ -83,16 +84,16 @@ class StartTlsProxyServerCommand extends Command
 
     protected function pipe(TcpConnection $source, TcpConnection $dest): void
     {
-        $source->onMessage = function ($source, $data) use ($dest) {
+        $source->onMessage = function ($source, $data) use ($dest): void {
             $dest->send($data, true);
         };
-        $source->onClose = function () use ($dest) {
+        $source->onClose = function () use ($dest): void {
             $dest->close();
         };
-        $dest->onBufferFull = function () use ($source) {
+        $dest->onBufferFull = function () use ($source): void {
             $source->pauseRecv();
         };
-        $dest->onBufferDrain = function () use ($source) {
+        $dest->onBufferDrain = function () use ($source): void {
             $source->resumeRecv();
         };
     }

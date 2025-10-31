@@ -27,18 +27,19 @@ class RenewTlsCertCommand extends Command
     protected function configure(): void
     {
         $this->setDescription('更新TLS证书')
-            ->addArgument('domainId', InputArgument::OPTIONAL, '域名ID');
+            ->addArgument('domainId', InputArgument::OPTIONAL, '域名ID')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $domainId = $input->getArgument('domainId');
-        if ($domainId === null || $domainId === '') {
+        if (null === $domainId || '' === $domainId) {
             throw new InvalidDomainIdException('请提供域名ID');
         }
-        
+
         $domain = $this->domainRepository->find($domainId);
-        if ($domain === null) {
+        if (null === $domain) {
             throw new DomainNotFoundException('找不到域名信息');
         }
 

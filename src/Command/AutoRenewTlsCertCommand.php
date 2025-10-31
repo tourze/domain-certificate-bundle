@@ -4,15 +4,19 @@ namespace DomainCertificateBundle\Command;
 
 use CloudflareDnsBundle\Repository\DnsDomainRepository;
 use DomainCertificateBundle\Service\TlsService;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Tourze\Symfony\CronJob\Attribute\AsCronTask;
 
 #[AsCronTask(expression: '44 10 * * *')]
 #[AsCommand(name: self::NAME, description: '自动更新所有TLS证书')]
+#[Autoconfigure(public: true)]
+#[WithMonologChannel(channel: 'domain_certificate')]
 class AutoRenewTlsCertCommand extends Command
 {
     public const NAME = 'cloudflare:auto-renew-tls-cert';

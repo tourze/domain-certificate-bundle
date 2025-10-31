@@ -8,6 +8,8 @@ services:
 
   DomainCertificateBundle\Command\:
     resource: '../../Command/'
+  DomainCertificateBundle\Controller\:
+    resource: '../../Controller/'
   DomainCertificateBundle\EventSubscriber\:
     resource: '../../EventSubscriber/'
   DomainCertificateBundle\Repository\:

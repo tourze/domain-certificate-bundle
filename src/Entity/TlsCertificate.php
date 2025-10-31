@@ -6,6 +6,7 @@ use CloudflareDnsBundle\Entity\DnsDomain;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DomainCertificateBundle\Repository\TlsCertificateRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Tourze\DoctrineTimestampBundle\Traits\TimestampableAware;
 use Tourze\DoctrineUserBundle\Traits\BlameableAware;
 
@@ -21,23 +22,28 @@ class TlsCertificate implements \Stringable
     #[ORM\Column(type: Types::INTEGER, options: ['comment' => 'ID'])]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'tlsCertificate')]
+    #[ORM\OneToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private DnsDomain $domain;
+    private ?DnsDomain $domain = null;
 
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => '证书路径'])]
+    #[Assert\Length(max: 255)]
     private ?string $tlsCertPath = null;
 
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => '密钥路径'])]
+    #[Assert\Length(max: 255)]
     private ?string $tlsKeyPath = null;
 
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => '完整证书链路径'])]
+    #[Assert\Length(max: 255)]
     private ?string $tlsFullchainPath = null;
 
     #[ORM\Column(length: 255, nullable: true, options: ['comment' => '证书链路径'])]
+    #[Assert\Length(max: 255)]
     private ?string $tlsChainPath = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => '证书过期时间'])]
+    #[Assert\Type(type: \DateTimeInterface::class)]
     private ?\DateTimeInterface $tlsExpireTime = null;
 
     public function getTlsCertPath(): ?string
@@ -45,11 +51,9 @@ class TlsCertificate implements \Stringable
         return $this->tlsCertPath;
     }
 
-    public function setTlsCertPath(?string $tlsCertPath): static
+    public function setTlsCertPath(?string $tlsCertPath): void
     {
         $this->tlsCertPath = $tlsCertPath;
-
-        return $this;
     }
 
     public function getTlsKeyPath(): ?string
@@ -57,11 +61,9 @@ class TlsCertificate implements \Stringable
         return $this->tlsKeyPath;
     }
 
-    public function setTlsKeyPath(?string $tlsKeyPath): static
+    public function setTlsKeyPath(?string $tlsKeyPath): void
     {
         $this->tlsKeyPath = $tlsKeyPath;
-
-        return $this;
     }
 
     public function getTlsFullchainPath(): ?string
@@ -69,11 +71,9 @@ class TlsCertificate implements \Stringable
         return $this->tlsFullchainPath;
     }
 
-    public function setTlsFullchainPath(?string $tlsFullchainPath): static
+    public function setTlsFullchainPath(?string $tlsFullchainPath): void
     {
         $this->tlsFullchainPath = $tlsFullchainPath;
-
-        return $this;
     }
 
     public function getTlsChainPath(): ?string
@@ -81,11 +81,9 @@ class TlsCertificate implements \Stringable
         return $this->tlsChainPath;
     }
 
-    public function setTlsChainPath(?string $tlsChainPath): static
+    public function setTlsChainPath(?string $tlsChainPath): void
     {
         $this->tlsChainPath = $tlsChainPath;
-
-        return $this;
     }
 
     public function getTlsExpireTime(): ?\DateTimeInterface
@@ -93,17 +91,15 @@ class TlsCertificate implements \Stringable
         return $this->tlsExpireTime;
     }
 
-    public function setTlsExpireTime(?\DateTimeInterface $tlsExpireTime): static
+    public function setTlsExpireTime(?\DateTimeInterface $tlsExpireTime): void
     {
         $this->tlsExpireTime = $tlsExpireTime;
-
-        return $this;
     }
 
     public function __toString(): string
     {
-        return $this->getId() !== null
-            ? sprintf('TLS证书#%d (%s)', $this->getId(), $this->getDomain()->getName())
+        return null !== $this->getId()
+            ? sprintf('TLS证书#%d (%s)', $this->getId(), $this->getDomain()?->getName() ?? 'N/A')
             : '';
     }
 
@@ -112,15 +108,13 @@ class TlsCertificate implements \Stringable
         return $this->id;
     }
 
-    public function getDomain(): DnsDomain
+    public function getDomain(): ?DnsDomain
     {
         return $this->domain;
     }
 
-    public function setDomain(DnsDomain $domain): static
+    public function setDomain(DnsDomain $domain): void
     {
         $this->domain = $domain;
-
-        return $this;
     }
 }
