@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Tourze\BundleDependency\BundleDependencyInterface;
 use Tourze\DoctrineTimestampBundle\DoctrineTimestampBundle;
 use Tourze\DoctrineUserBundle\DoctrineUserBundle;
+use Tourze\EasyAdminMenuBundle\EasyAdminMenuBundle;
 
 class DomainCertificateBundle extends Bundle implements BundleDependencyInterface
 {
@@ -22,6 +23,7 @@ class DomainCertificateBundle extends Bundle implements BundleDependencyInterfac
             DoctrineUserBundle::class => ['all' => true],
             EasyAdminBundle::class => ['all' => true],
             TwigBundle::class => ['all' => true],
+            EasyAdminMenuBundle::class => ['all' => true],
         ];
     }
 }
