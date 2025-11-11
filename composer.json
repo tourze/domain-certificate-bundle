@@ -29,10 +29,10 @@
     "tourze/cloudflare-dns-bundle": "0.0.*",
     "tourze/doctrine-indexed-bundle": "1.0.*",
     "tourze/doctrine-timestamp-bundle": "1.1.*",
-    "tourze/doctrine-track-bundle": "1.0.*",
+    "tourze/doctrine-track-bundle": "1.1.*",
     "tourze/doctrine-user-bundle": "1.0.*",
     "tourze/easy-admin-menu-bundle": "1.0.*",
-    "tourze/symfony-cron-job-bundle": "1.0.*",
+    "tourze/symfony-cron-job-bundle": "1.1.*",
     "tourze/symfony-dependency-service-loader": "1.0.*",
     "workerman/workerman": "^5.1"
   },
